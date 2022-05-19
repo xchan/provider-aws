@@ -66,7 +66,30 @@ const DefaultSection = ini.DefaultSection
 
 // GlobalRegion is the region name used for AWS services that do not have a notion
 // of region.
-const GlobalRegion = "aws-global"
+// const GlobalRegion = "aws-global"
+
+// GetGlobalRegion returns the global region for AWS services that do not have a notion
+// of region.  Ex. iam
+// Defaults to 'aws' partition
+func GetGlobalRegion(partition string) string {
+	// Global regions are convention based by partition
+	// Ex. "aws-global"
+	if partition == "" {
+		return "aws-global"
+	}
+	return partition + "-global"
+}
+
+// GetGlobalRegionForProviderConfig returns the global region for a provider config
+func GetGlobalRegionForProviderConfig(ctx context.Context, c client.Client, mg resource.Managed) (string, error) {
+	pc, err := GetProviderConfig(ctx, c, mg)
+	if err != nil {
+		return "", err
+	}
+	partition := pc.Spec.Credentials.Partition
+	region := GetGlobalRegion(partition)
+	return region, nil
+}
 
 // Endpoint URL configuration types.
 const (
@@ -111,13 +134,22 @@ func GetConfig(ctx context.Context, c client.Client, mg resource.Managed, region
 	}
 }
 
-// UseProviderConfig to produce a config that can be used to authenticate to AWS.
-func UseProviderConfig(ctx context.Context, c client.Client, mg resource.Managed, region string) (*aws.Config, error) { // nolint:gocyclo
+// GetProviderConfig retrieves the providerConfig from kubernetes associated with a managed resource
+func GetProviderConfig(ctx context.Context, c client.Client, mg resource.Managed) (*v1beta1.ProviderConfig, error) {
+	// nolint:gocyclo
 	pc := &v1beta1.ProviderConfig{}
 	if err := c.Get(ctx, types.NamespacedName{Name: mg.GetProviderConfigReference().Name}, pc); err != nil {
 		return nil, errors.Wrap(err, "cannot get referenced Provider")
 	}
+	return pc, nil
+}
 
+// UseProviderConfig to produce a config that can be used to authenticate to AWS.
+func UseProviderConfig(ctx context.Context, c client.Client, mg resource.Managed, region string) (*aws.Config, error) {
+	pc, err := GetProviderConfig(ctx, c, mg)
+	if err != nil {
+		return nil, err
+	}
 	t := resource.NewProviderConfigUsageTracker(c, &v1beta1.ProviderConfigUsage{})
 	if err := t.Track(ctx, mg); err != nil {
 		return nil, errors.Wrap(err, "cannot track ProviderConfig usage")
