@@ -146,6 +146,7 @@ func GetProviderConfig(ctx context.Context, c client.Client, mg resource.Managed
 
 // UseProviderConfig to produce a config that can be used to authenticate to AWS.
 func UseProviderConfig(ctx context.Context, c client.Client, mg resource.Managed, region string) (*aws.Config, error) {
+	// nolint:gocyclo
 	pc, err := GetProviderConfig(ctx, c, mg)
 	if err != nil {
 		return nil, err
