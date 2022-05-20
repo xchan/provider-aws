@@ -135,8 +135,7 @@ func GetConfig(ctx context.Context, c client.Client, mg resource.Managed, region
 }
 
 // GetProviderConfig retrieves the providerConfig from kubernetes associated with a managed resource
-func GetProviderConfig(ctx context.Context, c client.Client, mg resource.Managed) (*v1beta1.ProviderConfig, error) {
-	// nolint:gocyclo
+func GetProviderConfig(ctx context.Context, c client.Client, mg resource.Managed) (*v1beta1.ProviderConfig, error) { // nolint: gocyclo
 	pc := &v1beta1.ProviderConfig{}
 	if err := c.Get(ctx, types.NamespacedName{Name: mg.GetProviderConfigReference().Name}, pc); err != nil {
 		return nil, errors.Wrap(err, "cannot get referenced Provider")
@@ -145,8 +144,7 @@ func GetProviderConfig(ctx context.Context, c client.Client, mg resource.Managed
 }
 
 // UseProviderConfig to produce a config that can be used to authenticate to AWS.
-func UseProviderConfig(ctx context.Context, c client.Client, mg resource.Managed, region string) (*aws.Config, error) {
-	// nolint:gocyclo
+func UseProviderConfig(ctx context.Context, c client.Client, mg resource.Managed, region string) (*aws.Config, error) { // nolint: gocyclo
 	pc, err := GetProviderConfig(ctx, c, mg)
 	if err != nil {
 		return nil, err
