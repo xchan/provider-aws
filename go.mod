@@ -149,6 +149,6 @@ require (
 )
 
 replace (
-	github.com/aws/aws-sdk-go v1.42.0 => github.com/xchan/aws-sdk-go v1.42.0.0
-	github.com/aws/aws-sdk-go-v2 v1.16.2 => github.com/xchan/aws-sdk-go-v2 v1.16.2.0
+	github.com/aws/aws-sdk-go v1.42.0 => github.com/xchan/aws-sdk-go v1.42.100
+	github.com/aws/aws-sdk-go-v2 v1.16.2 => github.com/xchan/aws-sdk-go-v2 v1.16.100
 )
