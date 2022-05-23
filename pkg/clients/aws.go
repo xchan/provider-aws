@@ -66,7 +66,24 @@ const DefaultSection = ini.DefaultSection
 
 // GlobalRegion is the region name used for AWS services that do not have a notion
 // of region.
-const GlobalRegion = "aws-global"
+// const GlobalRegion = "aws-global"
+
+// GetGlobalRegionForProviderConfig get global region returns the global region for a provider config
+func GetGlobalRegionForProviderConfig(ctx context.Context, c client.Client, mg resource.Managed, global bool) (string, error) {
+	pc, err := GetProviderConfig(ctx, c, mg)
+	if err != nil {
+		return "", err
+	}
+
+	region := pc.Spec.Region
+	if global {
+		if strings.HasPrefix(region, "cn-") {
+			return "aws-cn-global", nil
+		}
+		return "aws-global", nil
+	}
+	return region, nil
+}
 
 // Endpoint URL configuration types.
 const (
@@ -111,11 +128,21 @@ func GetConfig(ctx context.Context, c client.Client, mg resource.Managed, region
 	}
 }
 
-// UseProviderConfig to produce a config that can be used to authenticate to AWS.
-func UseProviderConfig(ctx context.Context, c client.Client, mg resource.Managed, region string) (*aws.Config, error) { // nolint:gocyclo
+// GetProviderConfig get the config for the provider
+func GetProviderConfig(ctx context.Context, c client.Client, mg resource.Managed) (*v1beta1.ProviderConfig, error) { // nolint:gocyclo
 	pc := &v1beta1.ProviderConfig{}
 	if err := c.Get(ctx, types.NamespacedName{Name: mg.GetProviderConfigReference().Name}, pc); err != nil {
 		return nil, errors.Wrap(err, "cannot get referenced Provider")
+	}
+
+	return pc, nil
+}
+
+// UseProviderConfig to produce a config that can be used to authenticate to AWS.
+func UseProviderConfig(ctx context.Context, c client.Client, mg resource.Managed, region string) (*aws.Config, error) { // nolint:gocyclo
+	pc, err := GetProviderConfig(ctx, c, mg)
+	if err != nil {
+		return nil, err
 	}
 
 	t := resource.NewProviderConfigUsageTracker(c, &v1beta1.ProviderConfigUsage{})

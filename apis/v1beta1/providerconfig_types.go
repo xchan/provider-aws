@@ -47,6 +47,11 @@ type ProviderConfigSpec struct {
 	// of AWS calls made by the provider.
 	// +optional
 	Endpoint *EndpointConfig `json:"endpoint,omitempty"`
+
+	// Region the provider should be used in.
+	// This applies to clients and resources where a global region is used (iam, sts, route53, etc)
+	// +optional
+	Region string `json:"region,omitempty"`
 }
 
 // ProviderCredentials required to authenticate.
