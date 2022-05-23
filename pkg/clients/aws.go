@@ -81,9 +81,8 @@ func GetGlobalRegionForProviderConfig(ctx context.Context, c client.Client, mg r
 			return "aws-cn-global", nil
 		}
 		return "aws-global", nil
-	} else {
-		return region, nil
 	}
+	return region, nil
 }
 
 // Endpoint URL configuration types.
