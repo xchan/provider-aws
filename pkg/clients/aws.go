@@ -79,9 +79,8 @@ func GetGlobalRegionForProviderConfig(ctx context.Context, c client.Client, mg r
 	if global {
 		if strings.HasPrefix(region, "cn-") {
 			return "aws-cn-global", nil
-		} else {
-			return "aws-global", nil
 		}
+		return "aws-global", nil
 	} else {
 		return region, nil
 	}

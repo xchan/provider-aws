@@ -58,7 +58,7 @@ func (c *connector) Connect(ctx context.Context, mg cpresource.Managed) (managed
 	if err != nil {
 		return nil, err
 	}
-	
+
 	sess, err := awsclient.GetConfigV1(ctx, c.kube, mg, region)
 	if err != nil {
 		return nil, errors.Wrap(err, errCreateSession)
