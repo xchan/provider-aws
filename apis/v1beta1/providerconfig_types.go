@@ -51,7 +51,7 @@ type ProviderConfigSpec struct {
 	// Region the provider should be used in.
 	// This applies to clients and resources where a global region is used (iam, sts, route53, etc)
 	// +optional
-	Region *string `json:"partition,omitempty"`
+	Region string `json:"partition,omitempty"`
 }
 
 // ProviderCredentials required to authenticate.
