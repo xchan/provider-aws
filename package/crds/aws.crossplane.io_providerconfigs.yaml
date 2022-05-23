@@ -267,6 +267,9 @@ spec:
                   This setting will be deprecated. Use the externalID field under
                   assumeRole instead.
                 type: string
+              region:
+                description: Region the provider should be used in. This applies to clients and resources where a global region is used (iam, sts, route53, etc)
+                type: string
             required:
             - credentials
             type: object
