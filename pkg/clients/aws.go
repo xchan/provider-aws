@@ -68,7 +68,7 @@ const DefaultSection = ini.DefaultSection
 // of region.
 // const GlobalRegion = "aws-global"
 
-// Get global region returns the global region for a provider config
+// GetGlobalRegionForProviderConfig get global region returns the global region for a provider config
 func GetGlobalRegionForProviderConfig(ctx context.Context, c client.Client, mg resource.Managed, global bool) (string, error) {
 	pc, err := GetProviderConfig(ctx, c, mg)
 	if err != nil {
@@ -128,6 +128,7 @@ func GetConfig(ctx context.Context, c client.Client, mg resource.Managed, region
 	}
 }
 
+// GetProviderConfig get the config for the provider
 func GetProviderConfig(ctx context.Context, c client.Client, mg resource.Managed) (*v1beta1.ProviderConfig, error) { // nolint:gocyclo
 	pc := &v1beta1.ProviderConfig{}
 	if err := c.Get(ctx, types.NamespacedName{Name: mg.GetProviderConfigReference().Name}, pc); err != nil {
